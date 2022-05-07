@@ -2,10 +2,11 @@
 
     <PropertyGroup>
         <PackageId>EasySourcing.EntityFrameworkCore</PackageId>
+        <PackageTags>eventsourcing;ddd;cqrs</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Authors>Bruce Lin</Authors>
         <Description>A lightweight event sourcing implementation in .NET 6</Description>
         <RepositoryUrl>https://github.com/linwenda/EasySourcing</RepositoryUrl>
-        <PackageTags>eventsourcing;ddd;cqrs</PackageTags>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
