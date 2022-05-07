@@ -1,0 +1,63 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using EasySourcing.Abstraction;
+using EasySourcing.EntityFrameworkCore.DependencyInjection;
+using EasySourcing.EntityFrameworkCore.Tests.SeedWork;
+using EasySourcing.TestFixtures;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Xunit;
+
+namespace EasySourcing.EntityFrameworkCore.Tests;
+
+public class EntityFrameworkCoreStoreTests : TestBase
+{
+    [Fact]
+    public async Task CanSaveEvents()
+    {
+        var eventStore = ServiceProvider.GetRequiredService<IEventStore>();
+
+        var monitor = ServiceProvider.GetRequiredService<IOptions<EfCoreStoreOptions>>();
+        var monitor2 = ServiceProvider.GetRequiredService<IOptions<StoreOptions>>();
+
+        var sourcedId = Guid.NewGuid();
+
+        var expectedEvents = new List<IVersionedEvent>
+        {
+            new PostCreatedEvent(sourcedId, 1, "test", "test", Guid.NewGuid()),
+            new PostEditedEvent(sourcedId, 2, "test", "test")
+        };
+
+        await eventStore.SaveAsync(expectedEvents);
+
+        var actualEvents = await eventStore.LoadAsync(sourcedId, 0);
+
+        Assert.Equal(2, actualEvents.Count());
+
+        foreach (var expectedEvent in expectedEvents)
+        {
+            var actualEvent = actualEvents.Single(e =>
+                e.SourcedId == expectedEvent.SourcedId && e.Version == expectedEvent.Version);
+
+            Assert.Equal(expectedEvent.GetType(), actualEvent.GetType());
+            Assert.Equal(JsonConvert.SerializeObject(expectedEvent), JsonConvert.SerializeObject(actualEvent));
+        }
+    }
+
+    [Fact]
+    public async Task CanSaveMemento()
+    {
+        var mementoStore = ServiceProvider.GetRequiredService<IMementoStore>();
+
+        var expectedMemento = new PostMemento(Guid.NewGuid(), 10, "test", "test", Guid.NewGuid());
+
+        await mementoStore.SaveAsync(expectedMemento);
+
+        var actualMemento = await mementoStore.GetLatestMementoAsync(expectedMemento.SourcedId);
+
+        Assert.Equal(JsonConvert.SerializeObject(expectedMemento), JsonConvert.SerializeObject(actualMemento));
+    }
+}
