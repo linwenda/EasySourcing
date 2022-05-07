@@ -16,7 +16,7 @@ public static class EventSourcingDependencyInjection
 
         services.AddScoped(typeof(IEventSourcedRepository<>), typeof(EventSourcedRepository<>));
 
-        return new EventSourcingOptionsBuilder(services);
+        return new EventSourcingBuilder(services);
     }
 
     public static IEventSourcingBuilder AddProjection(this IEventSourcingBuilder builder, params Assembly[] assemblies)

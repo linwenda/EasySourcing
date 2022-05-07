@@ -3,13 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasySourcing.DependencyInjection;
 
-public class EventSourcingOptionsBuilder : IEventSourcingBuilder
+public class EventSourcingBuilder : IEventSourcingBuilder
 {
-    public EventSourcingOptionsBuilder(IServiceCollection services)
+    public EventSourcingBuilder(IServiceCollection services)
     {
         Services = services;
     }
 
     public IServiceCollection Services { get; }
-    public int TakeSnapshotEveryVersion { get; set; } = 10;
 }

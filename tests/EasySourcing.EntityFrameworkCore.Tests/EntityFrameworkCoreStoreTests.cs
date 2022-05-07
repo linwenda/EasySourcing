@@ -19,10 +19,7 @@ public class EntityFrameworkCoreStoreTests : TestBase
     public async Task CanSaveEvents()
     {
         var eventStore = ServiceProvider.GetRequiredService<IEventStore>();
-
-        var monitor = ServiceProvider.GetRequiredService<IOptions<EfCoreStoreOptions>>();
-        var monitor2 = ServiceProvider.GetRequiredService<IOptions<StoreOptions>>();
-
+        
         var sourcedId = Guid.NewGuid();
 
         var expectedEvents = new List<IVersionedEvent>
