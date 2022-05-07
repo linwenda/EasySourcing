@@ -3,9 +3,11 @@ using EasySourcing.DependencyInjection;
 using EasySourcing.EntityFrameworkCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace EasySourcing.EntityFrameworkCore.Tests.SeedWork;
 
+[Collection("Sequential")]
 public class TestBase : IDisposable
 {
     protected readonly IServiceProvider ServiceProvider;
