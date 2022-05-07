@@ -1,14 +1,20 @@
 # EasySourcing
+
+[![CI](https://github.com/linwenda/EasySourcing/actions/workflows/ci.yml/badge.svg)](https://github.com/linwenda/EasySourcing/actions/workflows/ci.yml)
+
 A lightweight event sourcing implementation based on .NET 6
 
 ## Installation
+
 You should install [EasySourcing with NuGet](https://www.nuget.org/packages/EasySourcingX):
 ```
 Install-Package EasySourcing
 ```
 
 ## Quick start:
+
 1. Create an EventSourced class
+
 ```csharp
 public class Post : EventSourced
 {
@@ -53,4 +59,5 @@ public class Post : EventSourced
     }
 }
 ```
+
 2. Pending
