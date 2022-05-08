@@ -1,24 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <PackageId>EasySourcing</PackageId>
-    <PackageTags>eventsourcing;ddd;cqrs</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Authors>Bruce Lin</Authors>
-    <Description>A lightweight event sourcing implementation in .NET 6</Description>
-    <RepositoryUrl>https://github.com/linwenda/EasySourcing</RepositoryUrl>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <PackageId>EasySourcing</PackageId>
+        <PackageTags>eventsourcing;ddd;cqrs</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Authors>Bruce Lin</Authors>
+        <Description>A lightweight event sourcing implementation in .NET 6</Description>
+        <RepositoryUrl>https://github.com/linwenda/EasySourcing</RepositoryUrl>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Abstraction\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Abstraction\"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0"/>
+    </ItemGroup>
 
 </Project>
