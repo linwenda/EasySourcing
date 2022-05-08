@@ -1,19 +1,20 @@
 # EasySourcing
 
 [![CI](https://github.com/linwenda/EasySourcing/actions/workflows/ci.yml/badge.svg)](https://github.com/linwenda/EasySourcing/actions/workflows/ci.yml)
+[![Nuget](https://img.shields.io/nuget/v/EasySourcing.EntityFrameworkCore)](https://www.nuget.org/packages/EasySourcing.EntityFrameworkCore)
 
 A lightweight event sourcing implementation in .NET 6
 
 ## Installation
 
-You should install [EasySourcing with NuGet](https://www.nuget.org/packages/EasySourcingX):
+You should install [EasySourcing with NuGet](https://www.nuget.org/packages/EasySourcing.EntityFrameworkCore) (Now only EF Core implementation):
 ```
-Install-Package EasySourcing
+Install-Package EasySourcing.EntityFrameworkCore
 ```
 
 ## Quick start:
 
-1. Create event messages
+##### 1. Create event messages
 
 ```csharp
 public class PostCreatedEvent : IVersionedEvent
@@ -52,7 +53,7 @@ public class PostEditedEvent : IVersionedEvent
 }
 ```
 
-2. Create event sourced entities
+##### 2. Create event sourced entities
 
 ```csharp
 public class Post : EventSourced
@@ -99,7 +100,7 @@ public class Post : EventSourced
 }
 ```
 
-3. DI Setup
+##### 3. DI Setup
 
 ```csharp
 var services = new ServiceCollection();
@@ -118,7 +119,7 @@ services.AddEventSourcing(options =>
     .AddProjection(typeof(PostReadModelProjector).Assembly);
 ```
 
-4. Use case
+##### 4. Use case
 
 ```csharp
 public class PostService : IPostService
@@ -147,6 +148,8 @@ public class PostService : IPostService
     }
 }
 ```
+Read model projector:
+
 ```csharp
 public class PostReadModelProjector : IProjectorHandler<PostCreatedEvent>, IProjectorHandler<PostEditedEvent>
 {
