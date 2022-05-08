@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>EasySourcing</PackageId>
+        <PackageId>EasySourcing.Net</PackageId>
         <PackageTags>eventsourcing;ddd;cqrs</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Authors>Bruce Lin</Authors>
