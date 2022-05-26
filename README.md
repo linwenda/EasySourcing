@@ -111,12 +111,17 @@ services.AddDbContext<SampleDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
 
-services.AddEventSourcing(options =>
+//Optional
+services.Configure<EventSourcingOptions>(options =>
+{
+    options.TakeEachSnapshotVersion = 5;
+});
+
+services.AddEventSourcing(builder =>
     {
-        options.TakeEachSnapshotVersion = 5;
-    })
-    .AddEfCoreStore<SampleDbContext>()
-    .AddProjection(typeof(PostReadModelProjector).Assembly);
+        builder.UseEfCoreStore<SampleDbContext>();
+    }).AddProjection(typeof(PostReadModelProjector).Assembly);
+
 ```
 
 ##### 4. Use case

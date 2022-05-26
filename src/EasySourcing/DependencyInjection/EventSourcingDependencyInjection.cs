@@ -6,9 +6,14 @@ namespace EasySourcing.DependencyInjection;
 
 public static class EventSourcingDependencyInjection
 {
-    public static IEventSourcingBuilder AddEventSourcing(this IServiceCollection services,
-        Action<EventSourcingOptions> setupAction = null)
+    public static IServiceCollection AddEventSourcing(this IServiceCollection services,
+        Action<EventSourcingBuilder> setupAction = null)
     {
+        if (services == null)
+        {
+            throw new ArgumentNullException(nameof(services));
+        }
+
         if (setupAction != null)
         {
             services.Configure(setupAction);
@@ -16,18 +21,27 @@ public static class EventSourcingDependencyInjection
 
         services.AddScoped(typeof(IEventSourcedRepository<>), typeof(EventSourcedRepository<>));
 
-        return new EventSourcingBuilder(services);
+        var builder = new EventSourcingBuilder(services);
+
+        setupAction?.Invoke(builder);
+        
+        return services;
     }
 
-    public static IEventSourcingBuilder AddProjection(this IEventSourcingBuilder builder, params Assembly[] assemblies)
+    public static IServiceCollection AddProjection(this IServiceCollection services, params Assembly[] assemblies)
     {
+        if (services == null)
+        {
+            throw new ArgumentNullException(nameof(services));
+        }
+
         if (assemblies == null || !assemblies.Any())
         {
             throw new ArgumentException(
                 "No assemblies found to scan. Supply at least one assembly to scan for handlers.");
         }
 
-        builder.Services.AddScoped<IProjector, Projector>();
+        services.AddScoped<IProjector, Projector>();
 
         foreach (var implementationType in assemblies.SelectMany(a => a.GetTypes())
                      .Where(type => !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface)
@@ -38,11 +52,11 @@ public static class EventSourcingDependencyInjection
 
             foreach (var serviceType in serviceTypes)
             {
-                builder.Services.AddScoped(serviceType, implementationType);
+                services.AddScoped(serviceType, implementationType);
             }
         }
 
-        return builder;
+        return services;
     }
 
     private static bool IsAssignableToGenericType(Type givenType, Type genericType)

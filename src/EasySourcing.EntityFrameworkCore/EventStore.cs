@@ -34,7 +34,7 @@ public class EventStore<TEventSourcingDbContext> : IEventStore
         {
             SourcedId = e.SourcedId,
             Version = e.Version,
-            CreationTime = DateTimeOffset.UtcNow,
+            CreationTime = DateTime.UtcNow,
             Type = e.GetType().FullName,
             Payload = JsonConvert.SerializeObject(e, EventSourcedSetting.JsonSerializerSettings)
         });

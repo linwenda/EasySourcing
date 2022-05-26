@@ -18,9 +18,17 @@ public class TestBase : IDisposable
 
         services.AddDbContext<TestDbContext>(x => x.UseInMemoryDatabase("di_test"));
 
-        services.AddEventSourcing(o => o.TakeEachSnapshotVersion = 3)
-            .AddEfCoreStore<TestDbContext>()
-            .AddProjection(typeof(TestBase).Assembly);
+        services.Configure<EventSourcingOptions>(options =>
+        {
+            options.TakeEachSnapshotVersion = 3;
+        });
+
+        services.AddEventSourcing(builder =>
+        {
+            builder.UseEfCoreStore<TestDbContext>();
+        });
+
+        services.AddProjection(typeof(TestBase).Assembly);
 
         ServiceProvider = services.BuildServiceProvider();
     }

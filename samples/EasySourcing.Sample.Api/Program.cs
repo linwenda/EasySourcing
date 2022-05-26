@@ -12,13 +12,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.Configure<EventSourcingOptions>(options =>
+{
+    options.TakeEachSnapshotVersion = 5;
+});
+
 builder.Services.AddDbContext<SampleDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
 
-builder.Services.AddEventSourcing()
-    .AddEfCoreStore<SampleDbContext>()
+builder.Services.AddEventSourcing(eventSourcingBuilder =>
+    {
+        eventSourcingBuilder.UseEfCoreStore<SampleDbContext>();
+    })
     .AddProjection(typeof(PostReadModelProjector).Assembly);
 
 builder.Services.AddScoped<IPostQueries, PostQueries>();
