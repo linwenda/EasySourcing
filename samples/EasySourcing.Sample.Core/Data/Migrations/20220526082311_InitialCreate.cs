@@ -15,7 +15,7 @@ namespace EasySourcing.Sample.Core.Data.Migrations
                 {
                     SourcedId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false),
-                    CreationTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Payload = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },

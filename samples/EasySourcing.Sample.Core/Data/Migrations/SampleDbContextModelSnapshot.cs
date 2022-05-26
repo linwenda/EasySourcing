@@ -30,8 +30,8 @@ namespace EasySourcing.Sample.Core.Data.Migrations
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("CreationTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Payload")
                         .HasColumnType("nvarchar(max)");

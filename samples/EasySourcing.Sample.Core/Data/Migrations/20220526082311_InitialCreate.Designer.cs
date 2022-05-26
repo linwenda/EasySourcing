@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasySourcing.Sample.Core.Data.Migrations
 {
     [DbContext(typeof(SampleDbContext))]
-    [Migration("20220505151444_InitialCreate")]
+    [Migration("20220526082311_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,8 +32,8 @@ namespace EasySourcing.Sample.Core.Data.Migrations
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("CreationTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Payload")
                         .HasColumnType("nvarchar(max)");
