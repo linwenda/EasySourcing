@@ -3,32 +3,23 @@ using EasySourcing.DependencyInjection;
 using EasySourcing.EntityFrameworkCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace EasySourcing.EntityFrameworkCore.Tests.SeedWork;
 
-[Collection("Sequential")]
-public class TestBase : IDisposable
+public class EasySourcingFixture : IDisposable
 {
-    protected readonly IServiceProvider ServiceProvider;
+    public IServiceProvider ServiceProvider { get; }
 
-    protected TestBase()
+    public EasySourcingFixture()
     {
         var services = new ServiceCollection();
 
         services.AddDbContext<TestDbContext>(x => x.UseInMemoryDatabase("di_test"));
 
-        services.Configure<EventSourcingOptions>(options =>
-        {
-            options.TakeEachSnapshotVersion = 3;
-        });
+        services.Configure<EventSourcingOptions>(options => options.TakeEachSnapshotVersion = 3);
 
-        services.AddEventSourcing(builder =>
-        {
-            builder.UseEfCoreStore<TestDbContext>();
-        });
-
-        services.AddProjection(typeof(TestBase).Assembly);
+        services.AddEasySourcing(typeof(EasySourcingFixture).Assembly,
+            builder => builder.UseEfCoreStore<TestDbContext>());
 
         ServiceProvider = services.BuildServiceProvider();
     }

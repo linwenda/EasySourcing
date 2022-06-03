@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasySourcing.EntityFrameworkCore.Tests.SeedWork;
 
-public class PostReadModelProjector : IProjectorHandler<PostCreatedEvent>, IProjectorHandler<PostEditedEvent>
+public class PostReadModelGenerator : IEventHandler<PostCreatedEvent>, IEventHandler<PostEditedEvent>
 {
     private readonly TestDbContext _context;
 
-    public PostReadModelProjector(TestDbContext context)
+    public PostReadModelGenerator(TestDbContext context)
     {
         _context = context;
     }

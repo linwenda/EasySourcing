@@ -6,7 +6,15 @@ namespace EasySourcing.DependencyInjection;
 
 public static class EventSourcingDependencyInjection
 {
-    public static IServiceCollection AddEventSourcing(this IServiceCollection services,
+    /// <summary>
+    /// Register event sourcing and handler from the specified assemblies
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    /// <param name="assembly">Assembly to scan</param>
+    /// <param name="setupAction">The action used to builder the options</param>
+    /// <returns>Service collection</returns>
+    public static IServiceCollection AddEasySourcing(this IServiceCollection services,
+        Assembly assembly,
         Action<EventSourcingBuilder> setupAction = null)
     {
         if (services == null)
@@ -20,7 +28,39 @@ public static class EventSourcingDependencyInjection
         }
 
         services.AddScoped(typeof(IEventSourcedRepository<>), typeof(EventSourcedRepository<>));
+        services.AddEventPublisher(new Assembly[] { assembly });
+        
+        var builder = new EventSourcingBuilder(services);
 
+        setupAction?.Invoke(builder);
+        
+        return services;
+    }
+    
+    /// <summary>
+    /// Register event sourcing and handler from the specified assemblies
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    /// <param name="assemblies">Assemblies to scan</param>
+    /// <param name="setupAction">The action used to builder the options</param>
+    /// <returns>Service collection</returns>
+    public static IServiceCollection AddEasySourcing(this IServiceCollection services,
+        IEnumerable<Assembly> assemblies,
+        Action<EventSourcingBuilder> setupAction = null)
+    {
+        if (services == null)
+        {
+            throw new ArgumentNullException(nameof(services));
+        }
+
+        if (setupAction != null)
+        {
+            services.Configure(setupAction);
+        }
+
+        services.AddScoped(typeof(IEventSourcedRepository<>), typeof(EventSourcedRepository<>));
+        services.AddEventPublisher(assemblies);
+        
         var builder = new EventSourcingBuilder(services);
 
         setupAction?.Invoke(builder);
@@ -28,7 +68,7 @@ public static class EventSourcingDependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddProjection(this IServiceCollection services, params Assembly[] assemblies)
+    private static IServiceCollection AddEventPublisher(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         if (services == null)
         {
@@ -41,18 +81,18 @@ public static class EventSourcingDependencyInjection
                 "No assemblies found to scan. Supply at least one assembly to scan for handlers.");
         }
 
-        services.AddScoped<IProjector, Projector>();
+        services.AddScoped<IEventPublisher, EventPublisher>();
 
         foreach (var implementationType in assemblies.SelectMany(a => a.GetTypes())
                      .Where(type => !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface)
-                     .Where(type => IsAssignableToGenericType(type, typeof(IProjectorHandler<>))))
+                     .Where(type => IsAssignableToGenericType(type, typeof(IEventHandler<>))))
         {
             var serviceTypes = implementationType.GetInterfaces().Where(i => i.IsGenericType)
-                .Where(i => i.GetGenericTypeDefinition() == typeof(IProjectorHandler<>));
+                .Where(i => i.GetGenericTypeDefinition() == typeof(IEventHandler<>));
 
             foreach (var serviceType in serviceTypes)
             {
-                services.AddScoped(serviceType, implementationType);
+                services.AddTransient(serviceType, implementationType);
             }
         }
 

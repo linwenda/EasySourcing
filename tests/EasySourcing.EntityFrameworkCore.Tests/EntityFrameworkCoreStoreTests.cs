@@ -3,23 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EasySourcing.Abstraction;
-using EasySourcing.EntityFrameworkCore.DependencyInjection;
 using EasySourcing.EntityFrameworkCore.Tests.SeedWork;
 using EasySourcing.TestFixtures;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Xunit;
 
 namespace EasySourcing.EntityFrameworkCore.Tests;
 
-public class EntityFrameworkCoreStoreTests : TestBase
+[Collection("Sequential")]
+public class EntityFrameworkCoreStoreTests : IClassFixture<EasySourcingFixture>
 {
+    private readonly IServiceProvider _serviceProvider;
+    
+    public EntityFrameworkCoreStoreTests(EasySourcingFixture fixture)
+    {
+        _serviceProvider = fixture.ServiceProvider;
+    }
+    
     [Fact]
     public async Task CanSaveEvents()
     {
-        var eventStore = ServiceProvider.GetRequiredService<IEventStore>();
-        
+        var eventStore = _serviceProvider.GetRequiredService<IEventStore>();
+
         var sourcedId = Guid.NewGuid();
 
         var expectedEvents = new List<IVersionedEvent>
@@ -47,7 +53,7 @@ public class EntityFrameworkCoreStoreTests : TestBase
     [Fact]
     public async Task CanSaveMemento()
     {
-        var mementoStore = ServiceProvider.GetRequiredService<IMementoStore>();
+        var mementoStore = _serviceProvider.GetRequiredService<IMementoStore>();
 
         var expectedMemento = new PostMemento(Guid.NewGuid(), 10, "test", "test", Guid.NewGuid());
 

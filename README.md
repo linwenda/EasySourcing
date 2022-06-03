@@ -117,10 +117,11 @@ services.Configure<EventSourcingOptions>(options =>
     options.TakeEachSnapshotVersion = 5;
 });
 
-services.AddEventSourcing(builder =>
+services.AddEasySourcing(typeof(PostReadModelGenerator).Assembly,
+    builder =>
     {
         builder.UseEfCoreStore<SampleDbContext>();
-    }).AddProjection(typeof(PostReadModelProjector).Assembly);
+    });
 
 ```
 
@@ -153,14 +154,14 @@ public class PostService : IPostService
     }
 }
 ```
-Read model projector:
+Read model generator:
 
 ```csharp
-public class PostReadModelProjector : IProjectorHandler<PostCreatedEvent>, IProjectorHandler<PostEditedEvent>
+public class PostReadModelGenerator : IEventHandler<PostCreatedEvent>, IEventHandler<PostEditedEvent>
 {
     private readonly PostReadModelDbContext _context;
 
-    public PostReadModelProjector(PostReadModelDbContext context)
+    public PostReadModelGenerator(PostReadModelDbContext context)
     {
         _context = context;
     }

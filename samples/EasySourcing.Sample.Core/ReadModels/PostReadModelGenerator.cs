@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasySourcing.Sample.Core.ReadModels;
 
-public class PostReadModelProjector : IProjectorHandler<PostCreatedEvent>, IProjectorHandler<PostEditedEvent>
+public class PostReadModelGenerator : IEventHandler<PostCreatedEvent>, IEventHandler<PostEditedEvent>
 {
     private readonly SampleDbContext _context;
 
-    public PostReadModelProjector(SampleDbContext context)
+    public PostReadModelGenerator(SampleDbContext context)
     {
         _context = context;
     }

@@ -1,3 +1,4 @@
+using System;
 using EasySourcing.Abstraction;
 using EasySourcing.EntityFrameworkCore.Tests.SeedWork;
 using EasySourcing.TestFixtures;
@@ -6,31 +7,39 @@ using Xunit;
 
 namespace EasySourcing.EntityFrameworkCore.Tests;
 
-public class DependencyInjectionTests : TestBase
+[Collection("Sequential")]
+public class DependencyInjectionTests : IClassFixture<EasySourcingFixture>
 {
+    private readonly IServiceProvider _serviceProvider;
+    
+    public DependencyInjectionTests(EasySourcingFixture fixture)
+    {
+        _serviceProvider = fixture.ServiceProvider;
+    }
+    
     [Fact]
     public void CanGetServices()
     {
-        var eventStore = ServiceProvider.GetService<IEventStore>();
+        var eventStore = _serviceProvider.GetService<IEventStore>();
         Assert.NotNull(eventStore);
 
-        var mementoStore = ServiceProvider.GetService<IMementoStore>();
+        var mementoStore = _serviceProvider.GetService<IMementoStore>();
         Assert.NotNull(mementoStore);
 
-        var eventSourcedRepository = ServiceProvider.GetService<IEventSourcedRepository<Post>>();
+        var eventSourcedRepository = _serviceProvider.GetService<IEventSourcedRepository<Post>>();
         Assert.NotNull(eventSourcedRepository);
 
-        var projector = ServiceProvider.GetService<IProjector>();
+        var projector = _serviceProvider.GetService<IEventPublisher>();
         Assert.NotNull(projector);
     }
 
     [Fact]
-    public void CanGetProjectorHandlers()
+    public void CanGetEventHandlers()
     {
-        var postProjectorForCreatedEvent = ServiceProvider.GetService<IProjectorHandler<PostCreatedEvent>>();
-        Assert.NotNull(postProjectorForCreatedEvent);
+        var handler1 = _serviceProvider.GetService<IEventHandler<PostCreatedEvent>>();
+        Assert.NotNull(handler1);
 
-        var postProjectorForEditedEvent = ServiceProvider.GetService<IProjectorHandler<PostEditedEvent>>();
-        Assert.NotNull(postProjectorForEditedEvent);
+        var handler2 = _serviceProvider.GetService<IEventHandler<PostEditedEvent>>();
+        Assert.NotNull(handler2);
     }
 }

@@ -10,18 +10,18 @@ public class EventSourcedRepository<T> : IEventSourcedRepository<T> where T : Ev
 {
     private readonly IEventStore _eventStore;
     private readonly IMementoStore _mementoStore;
-    private readonly IProjector _projector;
+    private readonly IEventPublisher _eventPublisher;
     private readonly EventSourcingOptions _options;
 
     public EventSourcedRepository(
         IEventStore eventStore,
         IMementoStore mementoStore,
-        IProjector projector,
+        IEventPublisher eventPublisher,
         IOptions<EventSourcingOptions> optionsAccessor)
     {
         _eventStore = eventStore;
         _mementoStore = mementoStore;
-        _projector = projector;
+        _eventPublisher = eventPublisher;
         _options = optionsAccessor?.Value ?? new EventSourcingOptions();
     }
 
@@ -84,7 +84,7 @@ public class EventSourcedRepository<T> : IEventSourcedRepository<T> where T : Ev
 
         await _eventStore.SaveAsync(uncommittedEvents, cancellationToken).ConfigureAwait(false);
 
-        var projectorTasks = uncommittedEvents.Select(e => _projector.ProjectAsync(e, cancellationToken)).ToList();
+        var projectorTasks = uncommittedEvents.Select(e => _eventPublisher.PublishAsync(e, cancellationToken)).ToList();
 
         await Task.WhenAll(projectorTasks).ConfigureAwait(false);
     }

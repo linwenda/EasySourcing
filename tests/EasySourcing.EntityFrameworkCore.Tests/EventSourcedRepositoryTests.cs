@@ -10,17 +10,19 @@ using Xunit;
 
 namespace EasySourcing.EntityFrameworkCore.Tests;
 
-public class EventSourcedRepositoryTests : TestBase
+
+[Collection("Sequential")]
+public class EventSourcedRepositoryTests : IClassFixture<EasySourcingFixture>
 {
     private readonly TestDbContext _context;
     private readonly IEventSourcedRepository<Post> _postRepository;
     private readonly IMementoStore _mementoStore;
 
-    public EventSourcedRepositoryTests()
+    public EventSourcedRepositoryTests(EasySourcingFixture fixture)
     {
-        _context = ServiceProvider.GetRequiredService<TestDbContext>();
-        _postRepository = ServiceProvider.GetRequiredService<IEventSourcedRepository<Post>>();
-        _mementoStore = ServiceProvider.GetRequiredService<IMementoStore>();
+        _context = fixture.ServiceProvider.GetRequiredService<TestDbContext>();
+        _postRepository = fixture.ServiceProvider.GetRequiredService<IEventSourcedRepository<Post>>();
+        _mementoStore = fixture.ServiceProvider.GetRequiredService<IMementoStore>();
     }
 
     [Fact]

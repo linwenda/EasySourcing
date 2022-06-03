@@ -1,3 +1,4 @@
+using System.Reflection;
 using EasySourcing.DependencyInjection;
 using EasySourcing.EntityFrameworkCore.DependencyInjection;
 using EasySourcing.Sample.Core.Data;
@@ -12,21 +13,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.Configure<EventSourcingOptions>(options =>
-{
-    options.TakeEachSnapshotVersion = 5;
-});
+builder.Services.Configure<EventSourcingOptions>(options => { options.TakeEachSnapshotVersion = 5; });
 
 builder.Services.AddDbContext<SampleDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
 
-builder.Services.AddEventSourcing(eventSourcingBuilder =>
-    {
-        eventSourcingBuilder.UseEfCoreStore<SampleDbContext>();
-    })
-    .AddProjection(typeof(PostReadModelProjector).Assembly);
+builder.Services.AddEasySourcing(typeof(PostReadModelGenerator).Assembly,
+    eventSourcingBuilder => { eventSourcingBuilder.UseEfCoreStore<SampleDbContext>(); });
 
 builder.Services.AddScoped<IPostQueries, PostQueries>();
 builder.Services.AddScoped<IPostService, PostService>();
